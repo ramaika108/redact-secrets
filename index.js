@@ -13,8 +13,12 @@ module.exports = function (redacted) {
   function map (obj) {
     let newObj = {};
     walk( obj, function ( key, val, path ) {
-        if (isSecret.key(key) || isSecret.value(val)) _.set(newObj, path, redacted);
-        else if(typeof val !== 'object') _.set(newObj, path, val);
+        try{
+            if (isSecret.key(key) || isSecret.value(val)) _.set(newObj, path, redacted);
+            else if(typeof val !== 'object') _.set(newObj, path, val);
+        } catch(err) {
+            _.set(newObj, path, val);
+        }
         return val;
     });
     return newObj;
@@ -27,3 +31,4 @@ module.exports = function (redacted) {
     });
   }
 }
+
