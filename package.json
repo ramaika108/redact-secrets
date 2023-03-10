@@ -4,8 +4,8 @@
   "description": "Deeply iterate over an object and redact secret values by replacing them with a predefined string",
   "main": "index.js",
   "dependencies": {
-    "is-secret": "^1.0.0",
-    "traverse": "^0.6.6"
+    "@whi/object-walk": "^0.3.0",
+    "is-secret": "^1.0.0"
   },
   "devDependencies": {
     "clone": "^2.0.0",

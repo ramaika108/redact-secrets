@@ -1,7 +1,8 @@
 'use strict'
 
-var traverse = require('traverse')
-var isSecret = require('is-secret')
+var _ = require('lodash');
+var isSecret = require('is-secret');
+const { walk } = require('@whi/object-walk');
 
 module.exports = function (redacted) {
   return {
@@ -10,14 +11,19 @@ module.exports = function (redacted) {
   }
 
   function map (obj) {
-    return traverse(obj).map(function (val) {
-      if (isSecret.key(this.key) || isSecret.value(val)) this.update(redacted)
-    })
+    let newObj = {};
+    walk( obj, function ( key, val, path ) {
+        if (isSecret.key(key) || isSecret.value(val)) _.set(newObj, path, redacted);
+        else if(typeof val !== 'object') _.set(newObj, path, val);
+        return val;
+    });
+    return newObj;
   }
 
   function forEach (obj) {
-    traverse(obj).forEach(function (val) {
-      if (isSecret.key(this.key) || isSecret.value(val)) this.update(redacted)
-    })
+    walk( obj, function ( key, val ) {
+        if (isSecret.key(key) || isSecret.value(val)) return redacted;
+        return val;
+    });
   }
 }
