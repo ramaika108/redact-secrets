@@ -26,7 +26,11 @@ module.exports = function (redacted) {
 
   function forEach (obj) {
     walk( obj, function ( key, val ) {
-        if (isSecret.key(key) || isSecret.value(val)) return redacted;
+        try{
+            if (isSecret.key(key) || isSecret.value(val)) return redacted;
+        } catch(err) {
+            return val;
+        }
         return val;
     });
   }
