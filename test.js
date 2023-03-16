@@ -14,6 +14,20 @@ test('redact.map', function (t) {
     },
     sub2: [{
       foo: 'non-secret',
+        deep:{
+            veryDeep: {
+                hello: {
+                    hi: {
+                        password: 'secret',
+                        yes: {
+                            answer: 'no',
+                            passwordToken: 'stuff'
+                        }
+                    }
+                }
+            }
+        }
+        ,
       token: 'secret'
     }]
   }
@@ -27,6 +41,20 @@ test('redact.map', function (t) {
     },
     sub2: [{
       foo: 'non-secret',
+        deep:{
+            veryDeep: {
+                hello: {
+                    hi: {
+                        password: 'redacted',
+                        yes: {
+                            answer: 'no',
+                            passwordToken: 'stuff'
+                        }
+                    }
+                }
+            }
+        }
+        ,
       token: 'redacted'
     }]
   }
