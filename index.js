@@ -10,24 +10,24 @@ module.exports = function (redacted) {
   }
 
   function map (obj) {
-    return traverse(obj).map(function (val) {
-        try{
+      try{
+        return traverse(obj).map(function (val) {
             if (this.level >= 8) return
             else if (isSecret.key(this.key) || isSecret.value(val)) this.update(redacted)
-        } catch(err) {
-            return
-        }
-    })
+        })
+      } catch(err) {
+          return obj
+      }
   }
 
   function forEach (obj) {
-    traverse(obj).forEach(function (val) {
-        try{
+      try{
+        traverse(obj).forEach(function (val) {
             if (this.level >= 8) return
             else if (isSecret.key(this.key) || isSecret.value(val)) this.update(redacted)
-        } catch(err) {
-            return
-        }
-    })
+        })
+      } catch(err) {
+        return
+      }
   }
 }
