@@ -1,8 +1,7 @@
 'use strict'
 
-var _ = require('lodash');
-var isSecret = require('is-secret');
-const { walk } = require('@whi/object-walk');
+var traverse = require('traverse')
+var isSecret = require('is-secret')
 
 module.exports = function (redacted) {
   return {
@@ -11,37 +10,24 @@ module.exports = function (redacted) {
   }
 
   function map (obj) {
-    let newObj = {};
-    walk( obj, function ( key, val, path ) {
-
-        if (path.length >= 8) {
-            _.set(newObj, path, val);
-            return val;
-        }
-
+    return traverse(obj).map(function (val) {
         try{
-            if (isSecret.key(key) || isSecret.value(val)) {
-                newObj[path[0]] = _.cloneDeep(newObj[path[0]]);
-                _.set(newObj, path, redacted);
-            }
-            else _.set(newObj, path, val);
+            if (this.level >= 8) return
+            else if (isSecret.key(this.key) || isSecret.value(val)) this.update(redacted)
         } catch(err) {
-            _.set(newObj, path, val);
+            return
         }
-        return val;
-    });
-    return newObj;
+    })
   }
 
   function forEach (obj) {
-    walk( obj, function ( key, val ) {
+    traverse(obj).forEach(function (val) {
         try{
-            if (isSecret.key(key) || isSecret.value(val)) return redacted;
+            if (this.level >= 8) return
+            else if (isSecret.key(this.key) || isSecret.value(val)) this.update(redacted)
         } catch(err) {
-            return val;
+            return
         }
-        return val;
-    });
+    })
   }
 }
-
